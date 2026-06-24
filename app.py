@@ -46,10 +46,20 @@ timeframe = st.sidebar.selectbox("Timeframe", ["All Time", "Last 30 Days", "This
 
 st.sidebar.header("🗣️ Script Settings")
 brand_voice_file = st.sidebar.file_uploader("Upload Brand Voice Guide (.txt, .md)", type=["txt", "md"])
+
+fallback_voice = "An authentic Italian chef who is passionate, slightly dramatic about food crimes, but educational."
+default_file_path = "Document 5 Laura's Voice.md"
+if os.path.exists(default_file_path):
+    try:
+        with open(default_file_path, "r", encoding="utf-8") as f:
+            fallback_voice = f.read()
+    except Exception:
+        pass
+
 if brand_voice_file is not None:
     brand_voice = brand_voice_file.getvalue().decode("utf-8")
 else:
-    brand_voice = st.sidebar.text_area("Or type Brand Voice here", "An authentic Italian chef who is passionate, slightly dramatic about food crimes, but educational.")
+    brand_voice = st.sidebar.text_area("Or type Brand Voice here", fallback_voice, height=150)
 
 script_style = st.sidebar.selectbox("Script Style", ["Aggressive Hook", "Educational", "Comedic", "Storytelling"])
 
