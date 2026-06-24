@@ -144,7 +144,7 @@ def get_llm_analysis(titles, mcp_context=None, brand_voice="An authentic Italian
     """
 
     if api_key:
-        models_to_try = ["gemini-1.5-flash-latest", "gemini-1.5-flash-8b-latest", "gemini-2.5-flash", "gemini-2.0-flash"]
+        models_to_try = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
         for i, model in enumerate(models_to_try):
             try:
                 url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
@@ -160,8 +160,8 @@ def get_llm_analysis(titles, mcp_context=None, brand_voice="An authentic Italian
                     return text
             except urllib.error.HTTPError as e:
                 error_body = e.read().decode()
-                if e.code in [503, 429] and i < len(models_to_try) - 1:
-                    print(f"Model {model} returned {e.code} (High Demand or Rate Limit). Trying next model...")
+                if e.code in [503, 429, 404] and i < len(models_to_try) - 1:
+                    print(f"Model {model} returned {e.code} (High Demand, Rate Limit, or Deprecated). Trying next model...")
                     continue
                 raise Exception(f"Gemini API HTTP Error {e.code} on {model}: {error_body}")
             except Exception as e:
