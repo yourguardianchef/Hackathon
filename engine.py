@@ -14,6 +14,7 @@ def get_youtube_titles(query="Italian food", order="viewCount", timeframe="All T
     # Try YouTube API first
     api_key = os.environ.get("YOUTUBE_API_KEY")
     if api_key:
+        api_key = api_key.strip()
         try:
             import urllib.parse
             encoded_query = urllib.parse.quote(query)
@@ -101,6 +102,8 @@ def get_mcp_context(query):
 def get_llm_analysis(titles, mcp_context=None, brand_voice="An authentic Italian chef", script_style="Aggressive Hook"):
     # Use Gemini API if available
     api_key = os.environ.get("GEMINI_API_KEY")
+    if api_key:
+        api_key = api_key.strip()
 
     mcp_instruction = ""
     if mcp_context:
