@@ -145,7 +145,7 @@ def get_llm_analysis(titles, mcp_context=None, brand_voice="An authentic Italian
 
     if api_key:
         import time
-        models_to_try = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
+        models_to_try = ["gemini-1.5-pro", "gemini-1.5-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
         for attempt in range(2): # Try the whole model list up to 2 times
             for i, model in enumerate(models_to_try):
                 try:
