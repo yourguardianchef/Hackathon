@@ -144,30 +144,41 @@ def get_llm_analysis(titles, mcp_context=None, brand_voice="An authentic Italian
     """
 
     if api_key:
+        import time
         models_to_try = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
-        for i, model in enumerate(models_to_try):
-            try:
-                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
-                payload = {
-                    "contents": [{"parts": [{"text": prompt}]}]
-                }
-                data = json.dumps(payload).encode('utf-8')
-                req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
-                with urllib.request.urlopen(req) as response:
-                    result = json.loads(response.read().decode())
-                    text = result['candidates'][0]['content']['parts'][0]['text']
-                    print(f"Successfully generated analysis using {model}.")
-                    return text
-            except urllib.error.HTTPError as e:
-                error_body = e.read().decode()
-                if e.code in [503, 429, 404] and i < len(models_to_try) - 1:
-                    print(f"Model {model} returned {e.code} (High Demand, Rate Limit, or Deprecated). Trying next model...")
-                    continue
-                raise Exception(f"Gemini API HTTP Error {e.code} on {model}: {error_body}")
-            except Exception as e:
-                if i < len(models_to_try) - 1:
-                    continue
-                raise Exception(f"Gemini API failed: {str(e)}")
+        for attempt in range(2): # Try the whole model list up to 2 times
+            for i, model in enumerate(models_to_try):
+                try:
+                    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+                    payload = {
+                        "contents": [{"parts": [{"text": prompt}]}]
+                    }
+                    data = json.dumps(payload).encode('utf-8')
+                    req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
+                    with urllib.request.urlopen(req) as response:
+                        result = json.loads(response.read().decode())
+                        text = result['candidates'][0]['content']['parts'][0]['text']
+                        print(f"Successfully generated analysis using {model}.")
+                        return text
+                except urllib.error.HTTPError as e:
+                    error_body = e.read().decode()
+                    if e.code in [503, 429, 404]:
+                        if i < len(models_to_try) - 1:
+                            continue
+                        elif attempt < 1:
+                            # If we exhausted all models, sleep for the 5s cooldown and try again
+                            print("All models hit rate limits. Sleeping 5 seconds before retry...")
+                            time.sleep(5)
+                            break # Break inner loop to restart attempt
+                        else:
+                            raise Exception(f"Gemini API HTTP Error {e.code} on {model}: {error_body}")
+                    else:
+                        raise Exception(f"Gemini API HTTP Error {e.code} on {model}: {error_body}")
+                except Exception as e:
+                    if i < len(models_to_try) - 1:
+                        continue
+                    if attempt == 1:
+                        raise Exception(f"Gemini API failed: {str(e)}")
     else:
         print("GEMINI_API_KEY not found. Using fallback mock analysis.")
 
