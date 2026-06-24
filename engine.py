@@ -180,28 +180,7 @@ def get_llm_analysis(titles, mcp_context=None, brand_voice="An authentic Italian
                     if attempt == 1:
                         raise Exception(f"Gemini API failed: {str(e)}")
     else:
-        print("GEMINI_API_KEY not found. Using fallback mock analysis.")
-
-    # Fallback response
-    return """# Authenticity Diagnosis
-
-**Viral Trend Identified**: The use of heavy cream and bacon in Carbonara, as well as breaking spaghetti.
-**Accuracy Index**: 30% Authentic
-
-**Diagnosis**: The data shows a persistent virality in Americanized Italian dishes relying on excess dairy and shortcut ingredients for visual shock value rather than traditional technique. These trends prioritize immediate rich flavors and convenience, starkly contrasting with the authentic method which relies on the emulsion of starchy pasta water, Pecorino Romano, and guanciale to achieve creaminess. By reacting to these deviations, creators manufacture outrage and engagement, moving further away from genuine Italian culinary heritage.
-
-## YouTube Shorts Production Brief
-
-### Script (30 seconds)
-**Hook (0-5s)**: (Chef holding a carton of heavy cream, looking disgusted) "If you put this in your Carbonara, we can't be friends."
-**Body (5-20s)**: "The internet is obsessed with cream and bacon. But real Roman Carbonara only needs four things: Guanciale, Pecorino, egg yolks, and black pepper. The magic is in the technique—emulsifying the fat with pasta water away from the heat."
-**Call-to-Action (20-30s)**: "Stop the culinary crimes! Hit subscribe to learn how to cook like a real Italian nonna."
-
-### Video Metadata
-**Title**: Stop Putting CREAM in Carbonara! 🛑🍝 #AuthenticItalian #Cooking #Shorts
-**Description**: Heavy cream in carbonara is a crime! Learn the authentic Roman way to make the creamiest pasta using only 4 ingredients. Guanciale, eggs, pecorino, and pepper. No cream allowed!
-**Tags**: #Carbonara #ItalianFood #AuthenticItalian #Pasta #CookingHacks #ItalianChef
-"""
+        raise Exception("GEMINI_API_KEY not found. Please check your .env or Streamlit Secrets.")
 
 def main(query="Italian food", order="viewCount", timeframe="All Time", brand_voice="An authentic Italian chef", script_style="Aggressive Hook"):
     print("Starting Intelligence to Action pipeline...")
