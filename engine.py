@@ -66,23 +66,9 @@ def get_youtube_titles(query="Italian food", order="viewCount", timeframe="All T
                     print(f"Successfully fetched titles from YouTube API for query: {query}")
                     return video_details
         except Exception as e:
-            print(f"YouTube API failed: {e}. Falling back...")
-    
-    # Fallback: public RSS/Atom feed or mocked payload
-    print("Using fallback payload for YouTube titles...")
-    # Mocked recent viral titles for "Italian food"
-    return [
-        {"title": "I put KETCHUP on pasta in Italy and this happened...", "channel": "@ViralFoodHacks", "url": "https://youtube.com/watch?v=mock1", "views": "4,200,000"},
-        {"title": "AUTHENTIC Carbonara with Heavy Cream & Bacon?!", "channel": "@ChefReacts", "url": "https://youtube.com/watch?v=mock2", "views": "3,100,000"},
-        {"title": "Gordon Ramsay's 10 Minute Ultimate Italian Meatballs", "channel": "@GordonRamsay", "url": "https://youtube.com/watch?v=mock3", "views": "2,800,000"},
-        {"title": "Trying the viral one-pan feta pasta bake!", "channel": "@TrendyEats", "url": "https://youtube.com/watch?v=mock4", "views": "1,500,000"},
-        {"title": "Real Italian Grandma reacts to American Pizza", "channel": "@NonnaReacts", "url": "https://youtube.com/watch?v=mock5", "views": "1,200,000"},
-        {"title": "I broke spaghetti in front of an Italian chef", "channel": "@PrankChef", "url": "https://youtube.com/watch?v=mock6", "views": "950,000"},
-        {"title": "Creamy Garlic Parmesan Fettuccine Alfredo", "channel": "@EasyRecipes", "url": "https://youtube.com/watch?v=mock7", "views": "850,000"},
-        {"title": "How to make the BEST Chicken Parm", "channel": "@CookingWithBob", "url": "https://youtube.com/watch?v=mock8", "views": "720,000"},
-        {"title": "Secret ingredient for perfect Bolognese (It's milk?)", "channel": "@FoodScience", "url": "https://youtube.com/watch?v=mock9", "views": "600,000"},
-        {"title": "Deep Fried Lasagna Rolls", "channel": "@HeartAttackGrill", "url": "https://youtube.com/watch?v=mock10", "views": "450,000"}
-    ]
+            raise Exception(f"YouTube API failed: {str(e)}. Please check your YOUTUBE_API_KEY.")
+    else:
+        raise Exception("YOUTUBE_API_KEY not found. Please check your .env or Streamlit Secrets.")
 
 def get_mcp_context(query):
     print(f"Querying live Guardian Chef WebMCP database for '{query}'...")
@@ -145,7 +131,7 @@ def get_llm_analysis(titles, mcp_context=None, brand_voice="An authentic Italian
 
     if api_key:
         import time
-        models_to_try = ["gemini-1.5-pro", "gemini-1.5-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
+        models_to_try = ["gemini-1.5-flash-8b", "gemini-1.0-pro", "gemini-1.5-pro", "gemini-1.5-flash", "gemini-2.5-flash", "gemini-2.0-flash"]
         for attempt in range(2): # Try the whole model list up to 2 times
             for i, model in enumerate(models_to_try):
                 try:
