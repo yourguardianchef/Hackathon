@@ -84,10 +84,13 @@ def get_mcp_context(query):
         query_lower = query.lower()
         
         # 1. Title match
+        title_matches = []
         for article in database:
             if query_lower in article.get("title", "").lower():
-                # Return the first 1500 chars to fit perfectly in prompt context
-                return f"Authentic Rule from WebMCP ({article['title']}):\n{article.get('content', '')[:1500]}"
+                title_matches.append(f"Authentic Rule from WebMCP ({article['title']}):\n{article.get('content', '')[:1500]}")
+        
+        if title_matches:
+            return "\n\n".join(title_matches[:3])
                 
         # 2. Content match
         for article in database:
